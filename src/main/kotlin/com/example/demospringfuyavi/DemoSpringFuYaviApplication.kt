@@ -1,17 +1,16 @@
-package com.example.demospringfuyavi
-
 import am.ik.yavi.builder.ValidatorBuilder
 import am.ik.yavi.builder.constraint
 import org.springframework.boot.WebApplicationType
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.webflux.webFlux
+import org.springframework.web.reactive.function.server.bodyToMono
 
 val app = application(WebApplicationType.REACTIVE) {
     webFlux {
         port = if (profiles.contains("test")) 8181 else 8080
         router {
             POST("/") { req ->
-                req.bodyToMono(Message::class.java)
+                req.bodyToMono<Message>()
                         .flatMap { message ->
                             Message.validator.validateToEither(message)
                                     .leftMap { mapOf("details" to it.details()) }
